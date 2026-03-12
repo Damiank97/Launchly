@@ -1619,12 +1619,10 @@ Kenmerken: live binnen 2 weken, geen verborgen kosten, Nederlandstalig support, 
 
 Beantwoord vragen kort, vriendelijk en in het Nederlands. Stimuleer bezoekers om een gratis gesprek in te plannen via het contactformulier. Maximaal 2-3 zinnen per antwoord. Gebruik soms een emoji. Wees direct en concreet.`;
 
-  // ── STAP 1: Vervang ALLEEN de tekst hieronder met jouw Gemini API key
-  // Haal je key op via: aistudio.google.com → Get API Key → Create API Key
-  const GEMINI_API_KEY = 'AIzaSyBfNiVF2S6nwbcREfmEc8ZciVOeU_6FJrk';
-  // ── Voorbeeld: const GEMINI_API_KEY = 'AIzaSyAbCdEfGhIjKlMnOpQrStUvWxYz123456';
-
-  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+  // ── STAP 1: Haal je GRATIS Groq API key op via console.groq.com
+  // Maak account → klik "API Keys" → "Create API Key" → kopieer en plak hieronder
+  const GROQ_API_KEY = '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';
+  // Voorbeeld: 'gsk_AbCdEfGhIjKlMnOpQrStUvWxYz...'
 
   async function sendMessage(text) {
     const message = text || chatInput.value.trim();
@@ -1638,13 +1636,20 @@ Beantwoord vragen kort, vriendelijk en in het Nederlands. Stimuleer bezoekers om
     const typingEl = addTyping();
 
     try {
-      const response = await fetch(GEMINI_URL, {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GROQ_API_KEY}`
+        },
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: [{ role: 'user', parts: [{ text: message }] }],
-          generationConfig: { maxOutputTokens: 300, temperature: 0.7 }
+          model: 'llama-3.1-8b-instant',
+          max_tokens: 300,
+          temperature: 0.7,
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: message }
+          ]
         })
       });
 
@@ -1653,10 +1658,10 @@ Beantwoord vragen kort, vriendelijk en in het Nederlands. Stimuleer bezoekers om
 
       if (!response.ok) {
         const errMsg = data.error?.message || `HTTP fout ${response.status}`;
-        console.error('Gemini fout:', errMsg, data);
+        console.error('Groq fout:', errMsg);
         addMessage(`⚠️ ${errMsg}`, 'bot');
       } else {
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+        const reply = data.choices?.[0]?.message?.content
           || 'Geen antwoord ontvangen. Probeer opnieuw.';
         addMessage(reply, 'bot');
       }
