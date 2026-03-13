@@ -78,7 +78,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 48px;
+    padding: 20px 80px;
     backdrop-filter: blur(16px);
     background: rgba(8,8,8,0.7);
     border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -130,7 +130,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 140px 48px 80px;
+    padding: 160px 80px 100px;
     position: relative;
     overflow: hidden;
   }
@@ -291,7 +291,7 @@
   }
 
   /* SECTIONS */
-  section { padding: 100px 48px; }
+  section { padding: 120px 80px; }
 
   .section-tag {
     font-size: 12px;
@@ -1285,15 +1285,196 @@
     text-align: center;
   }
 
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
+
+  /* ─── CONTAINER ─────────────────────────────────── */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 64px;
+  }
+
+  /* ─── HAMBURGER ──────────────────────────────────── */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile nav drawer */
+  .nav-mobile {
+    display: none;
+    position: fixed;
+    top: 65px; left: 0; right: 0;
+    background: rgba(8,8,8,0.97);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 24px 32px;
+    z-index: 99;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .nav-mobile.open { display: flex; }
+  .nav-mobile a {
+    color: var(--grey-text);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 12px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: color 0.2s;
+  }
+  .nav-mobile a:hover { color: var(--white); }
+  .nav-mobile .nav-cta-mobile {
+    margin-top: 12px;
+    background: var(--lime);
+    color: var(--black) !important;
+    text-align: center;
+    padding: 14px;
+    border-radius: 100px;
+    font-weight: 500;
+    border: none;
+  }
+
+  /* ─── TABLET: 901px – 1200px ─────────────────────── */
+  @media (max-width: 1200px) {
+    .container { padding: 0 40px; }
+    section { padding: 100px 40px; }
+    .hero { padding: 140px 40px 80px; }
+    nav { padding: 20px 40px; }
+  }
+
+  /* ─── MOBILE: ≤768px ─────────────────────────────── */
+  @media (max-width: 768px) {
+    /* Nav */
+    nav { padding: 16px 20px; }
     nav .nav-links { display: none; }
-    .hero { padding: 120px 24px 60px; }
-    section { padding: 60px 24px; }
-    .hero-stats { gap: 24px; }
-    .steps, .services-grid, .portfolio-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
-    .chatbot-layout, .contact-layout { grid-template-columns: 1fr; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .nav-hamburger { display: flex; }
+
+    /* General spacing */
+    section { padding: 64px 20px; }
+    .container { padding: 0 20px; }
+
+    /* Hero */
+    .hero { padding: 110px 20px 60px; }
+    .hero h1 { font-size: clamp(38px, 10vw, 60px); letter-spacing: -2px; }
+    .hero-sub { font-size: 16px; }
+    .hero-actions { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .hero-actions .btn-primary { width: 100%; text-align: center; justify-content: center; }
+    .hero-stats { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 20px 16px; 
+      margin-top: 48px;
+      padding-top: 32px;
+    }
+    .stat-num { font-size: 28px; }
+
+    /* Sections */
+    .section-title { font-size: clamp(28px, 7vw, 40px); letter-spacing: -1px; }
+
+    /* Steps */
+    .steps { 
+      grid-template-columns: 1fr; 
+      gap: 2px;
+      margin-top: 40px;
+    }
+    .step { padding: 32px 24px; }
+
+    /* Services */
+    .services-grid { 
+      grid-template-columns: 1fr; 
+      gap: 2px;
+      margin-top: 40px;
+    }
+    .service-card { padding: 32px 24px; }
+
+    /* Portfolio */
+    .portfolio-grid { 
+      grid-template-columns: 1fr; 
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    /* Pricing */
+    .pricing-grid { 
+      grid-template-columns: 1fr; 
+      gap: 2px;
+      margin-top: 40px;
+    }
+    .pricing-card { padding: 36px 28px; }
+    .pricing-price { font-size: 40px; }
+
+    /* Launch deal cards */
+    .launch-deals-grid {
+      flex-direction: column !important;
+      max-width: 100% !important;
+    }
+    .launch-deal { min-width: unset !important; width: 100% !important; }
+
+    /* Chatbot */
+    .chatbot-layout { 
+      grid-template-columns: 1fr; 
+      gap: 40px;
+      margin-top: 40px;
+    }
+    .chat-widget { max-width: 100%; }
+    .quick-questions { gap: 6px; }
+    .quick-q { font-size: 11px; padding: 5px 10px; }
+
+    /* Contact */
+    .contact-layout { 
+      grid-template-columns: 1fr; 
+      gap: 40px;
+      margin-top: 40px;
+    }
+    .contact-form { padding: 28px 20px; }
+
+    /* Testimonials */
+    .testimonials-grid { 
+      grid-template-columns: 1fr; 
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    /* FAQ */
+    .faq-item { padding: 20px; }
+    .faq-question { font-size: 15px; }
+
+    /* Footer */
+    footer { 
+      flex-direction: column; 
+      gap: 12px; 
+      text-align: center; 
+      padding: 32px 20px;
+    }
+
+    /* Buttons */
+    .btn-primary { padding: 14px 24px; font-size: 14px; }
+    .btn-ghost { padding: 14px 16px; font-size: 14px; }
+  }
+
+  /* ─── SMALL PHONES: ≤400px ───────────────────────── */
+  @media (max-width: 400px) {
+    .hero h1 { font-size: 34px; }
+    .hero-stats { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stat-num { font-size: 24px; }
+    .pricing-price { font-size: 36px; }
   }
 </style>
 </head>
@@ -1310,7 +1491,18 @@
     <li><a href="#faq">FAQ</a></li>
     <li><a href="#contact" class="nav-cta">Gratis gesprek →</a></li>
   </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu openen">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="#diensten" onclick="closeMobileNav()">Diensten</a>
+  <a href="#portfolio" onclick="closeMobileNav()">Portfolio</a>
+  <a href="#prijzen" onclick="closeMobileNav()">Prijzen</a>
+  <a href="#demo" onclick="closeMobileNav()">AI Demo</a>
+  <a href="#faq" onclick="closeMobileNav()">FAQ</a>
+  <a href="#contact" class="nav-cta-mobile" onclick="closeMobileNav()">Gratis gesprek inplannen →</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -1436,7 +1628,7 @@
       </div>
     </div>
     <p style="font-size:14px;color:var(--grey-text);margin-top:8px;">Geldt voor elk pakket — kies wat bij jou past:</p>
-    <div style="display:flex;gap:16px;width:100%;max-width:960px;margin-top:8px;justify-content:center;flex-wrap:wrap;">
+    <div class="launch-deals-grid" style="display:flex;gap:16px;width:100%;max-width:960px;margin-top:8px;justify-content:center;flex-wrap:wrap;">
       <div class="launch-deal" style="flex:1;min-width:240px;flex-direction:column;gap:12px;padding:32px 24px;text-align:center;">
         <div class="launch-deal-label">Starter Website</div>
         <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
@@ -1894,6 +2086,27 @@ Beantwoord vragen kort, vriendelijk en in het Nederlands. Stimuleer bezoekers om
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
+    }
+  });
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileNav.classList.toggle('open');
+  });
+
+  function closeMobileNav() {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+  }
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) {
+      closeMobileNav();
     }
   });
 
