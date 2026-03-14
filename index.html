@@ -383,12 +383,12 @@
       <div class="pillar-icon">🛠️</div>
       <div class="pillar-tag">Nieuw</div>
       <h3>Micro-SaaS Tools</h3>
-      <p>Kleine AI tools gebouwd voor een specifieke niche. Eenmalig gebouwd, maandelijks terugkerend. Jij verkoopt het, wij bouwen het.</p>
+      <p>Wij bouwen een AI tool op maat voor jouw bedrijf of niche. Eenmalig gebouwd, maandelijks terugkerend inkomen. Jij verkoopt toegang aan jouw klanten.</p>
       <div class="pillar-items">
-        <div class="pillar-item">CV Optimizer en sollicitatietools</div>
-        <div class="pillar-item">Offerte generators voor vakbedrijven</div>
-        <div class="pillar-item">AI content tools voor sectoren</div>
-        <div class="pillar-item">Branche-specifieke AI assistenten</div>
+        <div class="pillar-item">CV Optimizer voor recruiters of jobboards</div>
+        <div class="pillar-item">Offerte generator voor installateurs en aannemers</div>
+        <div class="pillar-item">AI content tool voor jouw sector</div>
+        <div class="pillar-item">Branche-specifieke AI assistent op maat</div>
         <div class="pillar-item">Prijs op aanvraag</div>
       </div>
     </div>
@@ -447,6 +447,10 @@
             <div class="msg-dot" style="background:#fff;color:#080808">🎯</div>
             <div class="msg-bubble">Goedemiddag! Ik help je snel bepalen of Briqk bij jou past. Ik stel je 4 korte vragen. Klaar?</div>
           </div>
+        </div>
+        <div class="quick-questions" id="qualQuickAnswers">
+          <button class="quick-q" onclick="sendQuickQual(this)">Ja, ga maar!</button>
+          <button class="quick-q" onclick="sendQuickQual(this)">Vertel me meer eerst</button>
         </div>
         <div class="chat-input-area">
           <input type="text" class="chat-input" id="chatInput2" placeholder="Type je antwoord..." maxlength="300" />
@@ -798,6 +802,25 @@ function sendQuick1(btn) { sendMsg1(btn.textContent); }
 document.getElementById('chatInput1').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendMsg1(); } });
 
 // ---- BOT 2: LEAD QUALIFIER ----
+const QUAL_QUICK = [
+  ['Ja, ga maar!', 'Vertel me meer eerst'],          // opening
+  ['Nieuwe website', 'AI chatbot toevoegen', 'Automatisering'],  // q1
+  ['Onder €1.000', '€1.000 - €2.500', 'Meer dan €2.500'],       // q2
+  ['Zo snel mogelijk', 'Binnen 1 maand', 'Oriënterend'],         // q3
+  ['Ja, ik beslis zelf', 'Ik moet overleggen'],                  // q4
+];
+
+function updateQualQuick(step) {
+  const container = document.getElementById('qualQuickAnswers');
+  if (!container) return;
+  const answers = QUAL_QUICK[step] || [];
+  if (answers.length === 0) { container.style.display = 'none'; return; }
+  container.style.display = 'flex';
+  container.innerHTML = answers.map(a => `<button class="quick-q" onclick="sendQuickQual(this)">${a}</button>`).join('');
+}
+
+function sendQuickQual(btn) { sendMsg2(btn.textContent); }
+
 const QUAL_QUESTIONS = [
   'Super! Vertel me kort: wat voor bedrijf heb je en wat wil je verbeteren of automatiseren?',
   'Goed om te weten! Heb je al een idee van het budget dat je beschikbaar hebt?',
@@ -823,6 +846,8 @@ async function sendMsg2(text) {
   const msg = text || document.getElementById('chatInput2').value.trim();
   if (!msg || isLoading2) return;
 
+  const qqa = document.getElementById('qualQuickAnswers');
+  if (qqa) qqa.style.display = 'none';
   addMsg('chatMessages2', msg, 'user', '🎯');
   document.getElementById('chatInput2').value = '';
   isLoading2 = true;
@@ -839,6 +864,7 @@ async function sendMsg2(text) {
     typing.remove();
     if (qualStep < 4) {
       addMsg('chatMessages2', QUAL_QUESTIONS[qualStep], 'bot', '🎯');
+      updateQualQuick(qualStep);
     } else {
       try {
         const summary = `Antwoorden van de lead:\n1. ${qualAnswers[0]}\n2. ${qualAnswers[1]}\n3. ${qualAnswers[2]}\n4. ${qualAnswers[3]}`;
