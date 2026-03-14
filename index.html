@@ -803,11 +803,10 @@ document.getElementById('chatInput1').addEventListener('keydown', e => { if (e.k
 
 // ---- BOT 2: LEAD QUALIFIER ----
 const QUAL_QUICK = [
-  ['Ja, ga maar!', 'Vertel me meer eerst'],          // opening
-  ['Nieuwe website', 'AI chatbot toevoegen', 'Automatisering'],  // q1
-  ['Onder €1.000', '€1.000 - €2.500', 'Meer dan €2.500'],       // q2
-  ['Zo snel mogelijk', 'Binnen 1 maand', 'Oriënterend'],         // q3
-  ['Ja, ik beslis zelf', 'Ik moet overleggen'],                  // q4
+  ['Nieuwe website', 'AI chatbot toevoegen', 'Automatisering'],  // na q1
+  ['Onder €1.000', '€1.000 - €2.500', 'Meer dan €2.500'],       // na q2
+  ['Zo snel mogelijk', 'Binnen 1 maand', 'Oriënterend'],         // na q3
+  ['Ja, ik beslis zelf', 'Ik moet overleggen'],                  // na q4
 ];
 
 function updateQualQuick(step) {
@@ -864,7 +863,7 @@ async function sendMsg2(text) {
     typing.remove();
     if (qualStep < 4) {
       addMsg('chatMessages2', QUAL_QUESTIONS[qualStep], 'bot', '🎯');
-      updateQualQuick(qualStep);
+      updateQualQuick(qualStep - 1);
     } else {
       try {
         const summary = `Antwoorden van de lead:\n1. ${qualAnswers[0]}\n2. ${qualAnswers[1]}\n3. ${qualAnswers[2]}\n4. ${qualAnswers[3]}`;
@@ -887,7 +886,27 @@ async function sendMsg2(text) {
 document.getElementById('chatInput2').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendMsg2(); } });
 
 // ---- CV OPTIMIZER ----
-const SYSTEM_CV = `Je bent een expert CV-schrijver. Een gebruiker geeft je hun huidige CV (of samenvatting) en een vacature. Herschrijf hun professionele samenvatting en top 3 werkpunten zodat ze perfect aansluiten op de vacature. Gebruik krachtige werkwoorden, kwantificeer resultaten waar mogelijk en verwerk trefwoorden uit de vacature. Schrijf in het Nederlands. Geef een korte executive summary + 3 hergeschreven bullet points. Max 250 woorden totaal.`;
+const SYSTEM_CV = `Je bent een expert CV-schrijver. Een gebruiker geeft je hun huidige CV en een vacature. Herschrijf hun professionele samenvatting en top 3 werkpunten zodat ze perfect aansluiten op de vacature.
+
+BELANGRIJK: Als het CV te kort of leeg is (minder dan 50 woorden), geef dan GEEN fictieve inhoud. Zeg dan vriendelijk: "Jouw CV bevat te weinig informatie. Voeg meer details toe over je werkervaring, vaardigheden en resultaten."
+
+Als het CV voldoende is: gebruik krachtige werkwoorden, kwantificeer resultaten waar mogelijk, verwerk trefwoorden uit de vacature. Schrijf in het Nederlands. Gebruik geen markdown sterretjes (**). Gebruik hoofdletters voor koppen zoals: PROFESSIONELE SAMENVATTING en TOP 3 WERKPUNTEN. Max 250 woorden totaal.`;
+
+function renderCV(text) {
+  return text.split("\n").map(function(line) {
+    var clean = line.replace(/\*\*/g, "");
+    var headers = ["PROFESSIONELE SAMENVATTING","TOP 3 WERKPUNTEN","Professionele Samenvatting","Top 3 Werkpunten"];
+    for (var i = 0; i < headers.length; i++) {
+      if (clean.indexOf(headers[i]) === 0) {
+        return '<strong style="color:var(--lime);display:block;margin-top:14px;margin-bottom:4px">' + clean + '</strong>';
+      }
+    }
+    if (clean.charAt(0) === "-" || clean.charAt(0) === "\u2013") {
+      return "\u2022 " + clean.slice(2);
+    }
+    return clean;
+  }).join("<br>");
+}
 
 async function optimizeCV() {
   const cvText = document.getElementById('cvInput').value.trim();
@@ -896,19 +915,23 @@ async function optimizeCV() {
     alert('Vul zowel je CV als de vacature in.');
     return;
   }
+  if (cvText.split(/\s+/).length < 20) {
+    alert('Voeg meer informatie toe aan je CV. Beschrijf je werkervaring, vaardigheden en resultaten.');
+    return;
+  }
   const btn = document.getElementById('cvBtn');
   const result = document.getElementById('cvResult');
   btn.disabled = true;
   btn.textContent = 'Optimaliseren...';
   result.className = 'cv-result';
-  result.textContent = '';
+  result.innerHTML = '';
   try {
     const userMsg = `Huidig CV:\n${cvText}\n\nVacature:\n${jobText}`;
     const reply = await callAPI(SYSTEM_CV, userMsg);
-    result.textContent = reply;
+    result.innerHTML = renderCV(reply);
     result.className = 'cv-result visible';
   } catch(e) {
-    result.textContent = 'Er ging iets mis. Probeer het opnieuw.';
+    result.innerHTML = 'Er ging iets mis. Probeer het opnieuw.';
     result.className = 'cv-result visible';
   }
   btn.disabled = false;
