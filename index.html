@@ -102,7 +102,7 @@
   /* DUAL BOT DEMO */
   .demo-section { background: var(--black); position: relative; overflow: hidden; }
   .demo-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(200,255,0,0.03), transparent); pointer-events: none; }
-  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 60px; }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 60px; align-items: start; }
   .demo-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lime); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .demo-label span { background: rgba(200,255,0,0.15); border: 1px solid rgba(200,255,0,0.3); padding: 2px 10px; border-radius: 100px; }
 
@@ -113,7 +113,7 @@
   .chat-header-name { font-weight: 500; font-size: 14px; }
   .chat-header-status { font-size: 12px; color: var(--lime); display: flex; align-items: center; gap: 5px; }
   .chat-header-status::before { content: ''; width: 6px; height: 6px; background: var(--lime); border-radius: 50%; }
-  .chat-messages { height: 280px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
+  .chat-messages { height: 260px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
   .chat-messages::-webkit-scrollbar { width: 4px; }
   .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
   .msg { display: flex; gap: 10px; max-width: 85%; animation: msgIn 0.3s ease; }
@@ -402,7 +402,7 @@
   <p class="section-sub">Twee bots, twee doelen. Test ze allebei en ontdek wat bij jouw bedrijf past.</p>
   <div class="demo-grid">
     <!-- CHATBOT -->
-    <div class="reveal">
+    <div class="reveal" style="display:flex;flex-direction:column;">
       <div class="demo-label"><span>Standaard Chatbot</span> — Informeert en helpt bezoekers</div>
       <div class="chat-widget">
         <div class="chat-header">
@@ -431,7 +431,7 @@
     </div>
 
     <!-- LEAD QUALIFIER -->
-    <div class="reveal">
+    <div class="reveal" style="display:flex;flex-direction:column;">
       <div class="demo-label"><span>Lead Qualifier Bot</span> — Filtert warme leads automatisch</div>
       <div class="chat-widget">
         <div class="chat-header">
@@ -864,7 +864,7 @@ async function sendMsg2(text) {
     typing.remove();
     if (qualStep <= 4) {
       addMsg('chatMessages2', QUAL_QUESTIONS[qualStep - 1], 'bot', '🎯');
-      updateQualQuick(qualStep);
+      updateQualQuick(qualStep - 1);
     } else {
       try {
         const summary = `Antwoorden van de lead:\n1. ${qualAnswers[0]}\n2. ${qualAnswers[1]}\n3. ${qualAnswers[2]}\n4. ${qualAnswers[3]}`;
