@@ -102,7 +102,9 @@
   /* DUAL BOT DEMO */
   .demo-section { background: var(--black); position: relative; overflow: hidden; }
   .demo-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(200,255,0,0.03), transparent); pointer-events: none; }
-  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 60px; align-items: start; }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 60px; align-items: stretch; }
+  .demo-grid .chat-widget { display: flex; flex-direction: column; height: 100%; }
+  .demo-grid .chat-messages { flex: 1; height: auto; min-height: 240px; }
   .demo-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lime); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .demo-label span { background: rgba(200,255,0,0.15); border: 1px solid rgba(200,255,0,0.3); padding: 2px 10px; border-radius: 100px; }
 
@@ -822,8 +824,9 @@ function updateQualQuick(step) {
 function sendQuickQual(btn) { sendMsg2(btn.textContent); }
 
 const QUAL_QUESTIONS = [
-  'Super! Vertel me kort: wat voor bedrijf heb je en wat wil je verbeteren of automatiseren?',
-  'Goed om te weten! Heb je al een idee van het budget dat je beschikbaar hebt?',
+  'Super! Wat voor bedrijf heb je? (bijv. ZZP, MKB, branche)',
+  'Goed! En wat wil je verbeteren of automatiseren?',
+  'Interessant! Heb je al een idee van het budget dat je beschikbaar hebt?',
   'Wanneer zou je dit gerealiseerd willen hebben?',
   'Laatste vraag: ben jij degene die de beslissing neemt, of moet je dit nog afstemmen met iemand anders?'
 ];
@@ -855,19 +858,19 @@ async function sendMsg2(text) {
   qualAnswers.push(msg);
   qualStep++;
 
-  const progress = Math.min((qualStep / 4) * 100, 100);
+  const progress = Math.min((qualStep / 5) * 100, 100);
   document.getElementById('qualProgress').style.width = progress + '%';
 
   const typing = addTyping('chatMessages2', '🎯');
 
   setTimeout(async () => {
     typing.remove();
-    if (qualStep <= 4) {
+    if (qualStep <= 5) {
       addMsg('chatMessages2', QUAL_QUESTIONS[qualStep - 1], 'bot', '🎯');
       updateQualQuick(qualStep - 1);
     } else {
       try {
-        const summary = `Antwoorden van de lead:\n1. ${qualAnswers[0]}\n2. ${qualAnswers[1]}\n3. ${qualAnswers[2]}\n4. ${qualAnswers[3]}`;
+        const summary = `Antwoorden van de lead:\n1. ${qualAnswers[0]}\n2. ${qualAnswers[1]}\n3. ${qualAnswers[2]}\n4. ${qualAnswers[3]}\n5. ${qualAnswers[4]}`;
         const reply = await callAPI(SYSTEM_QUAL, summary);
         addMsg('chatMessages2', reply, 'bot', '🎯');
         document.getElementById('chatInput2').disabled = true;
